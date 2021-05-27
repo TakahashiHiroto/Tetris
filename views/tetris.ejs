@@ -1,0 +1,637 @@
+<body>
+    <canvas id="can"></canvas>
+
+    <audio autoplay loop id="audio">
+    <!-- <source src="../bgm/game_maoudamashii_2_lastboss02.mp3"> -->
+    </audio>
+    <script>
+        //効果音
+        let sound1=new Audio(); sound1.src="/bgm/se_maoudamashii_battle_gun05.mp3"; //設置音
+        let sound2=new Audio(); sound2.src="/bgm/se_maoudamashii_battle_gun03.mp3"; //列消し
+        let sound3=new Audio(); sound2.src="/bgm/se_maoudamashii_battle16.mp3";     //回転
+
+    //フィールドサイズ
+    const FIELD_COL=10;
+    const FIELD_ROW=20;
+    
+    let can=document.getElementById("can");
+    let con=can.getContext("2d");
+    
+    const TETRI_SIZE=4;
+    const BLOCK_SIZE=30;
+    const SMALLBLOCK_SIZE=20;
+    
+    //キャンバスサイズ
+    const CANVAS_W=BLOCK_SIZE*24;
+    const CANVAS_H=BLOCK_SIZE*24;//巨大キャンパスにした。
+
+    //背景、ブロック
+    let background=new Image(); //ImageはBGMの画像版。
+    background.src="/image/dark_aurora-Creative_design_wallpaper_1920x1080.jpg";
+    let block=new Image();
+    block.src="/image/cube-1678974_1920.png";
+
+
+    //枠色
+    const OUT_LINE_COLOR = "rgba(100,100,255,1)";
+
+    //スコア、消したライン数
+    let score=0; let lines=0;
+
+    //ホールド用
+    let holdCount=0;
+    let tetri_hold=null;
+
+    //ホールド制限フラグ
+    let holdflag=true;
+
+    //フィールドサイズ
+    const SCREEN_W=BLOCK_SIZE*10;
+    const SCREEN_H=BLOCK_SIZE*20;
+    
+    //座標系
+    const OFFSET_X=200; //フィールドの左上の座標
+    const OFFSET_Y=20;
+    const NEXTSET_X=510; //ネクスト一個目の位置座標
+    const NEXTSET_Y=20;
+    const HOLDSET_X=100;　//ホールドの位置座標
+    const HOLDSET_Y=20;
+    const START_X=FIELD_COL/2-TETRI_SIZE/2; //テトリミノのサイズの半分引くの忘れそう。
+    const START_Y=0;
+    let tetri_x=START_X; let tetri_y=START_Y;
+
+    //初期落下スピード
+    let GAME_SPEED=800; //←の値がスコアによって変わるようにすることも可。
+    
+    //キャンバス設定
+    can.width =CANVAS_W; //can.width(height)はコマンド。キャンパスの広さの要素を変更。
+    can.height=CANVAS_H; //めんどいから巨大キャンパスにした。
+
+    //フィールド本体
+    let field=[];
+
+    //ゲームオーバーフラグ
+    let over=false;
+    
+    //テトリミノの色
+    const unkos=[
+        [],
+        [9,405],
+        [305,157],
+        [1615,325],
+        [447,695],
+        [1038,840],
+        [742,460],
+        [1470,840],
+    ]
+
+    //ミノカウント
+    let mino_count=[
+         ,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+    ]
+
+
+    //テトリミノの型
+    const TETRI_TYPES=[
+              [],               //0=空
+                            　　//const なのに回転させるときはなぜ大丈夫？letでおかないとまずそうな気がするけど
+    
+    
+    
+              [   [0,0,0,0],    //1=I
+                  [1,1,1,1],
+                  [0,0,0,0],                                        
+                  [0,0,0,0]   ],
+    
+              [   [0,0,0,0],    //2=Z
+                  [1,1,0,0],
+                  [0,1,1,0],
+                  [0,0,0,0]   ],
+    
+              [   [0,1,0,0],    //3=L
+                  [0,1,0,0],
+                  [0,1,1,0],
+                  [0,0,0,0]   ],
+    
+              [   [0,0,1,0],    //4=J
+                  [0,0,1,0],
+                  [0,1,1,0],
+                  [0,0,0,0]   ],
+    
+    
+              [   [0,1,0,0],    //5=T
+                  [0,1,1,0],
+                  [0,1,0,0],
+                  [0,0,0,0]   ],
+    
+              [   [0,0,0,0],    //6=O
+                  [0,1,1,0],
+                  [0,1,1,0],
+                  [0,0,0,0]   ],       
+    
+              [   [0,0,0,0],    //7=S
+                  [0,1,1,0],
+                  [1,1,0,0],
+                  [0,0,0,0]   ]
+    ]
+    　　　　　　　　　　　　　　　　　　　　　　　　　　　　  //Math.floor(Math.random*10-1)+1とすると1～9の乱数となる  //Math.floorは小数点以下切り捨てたものを表示するコマンド  　　　　　　　　　　　　　　　　　　　　　　　　　　　　  //Math.random()は0～1(1未満)の数を無作為に選ぶコマンド(乱数)
+    //テトリミノの形　　　　　　　　　　　　　　　　　　　　  
+    tetri_t = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+    tetri_n = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+    tetri_nn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+    tetri_nnn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+    tetri_nnnn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+    
+    while( tetri_t==tetri_n || tetri_t==tetri_nn || tetri_t==tetri_nnn || tetri_t==tetri_nnnn || 
+           tetri_n==tetri_nn || tetri_n==tetri_nnn || tetri_n==tetri_nnnn || tetri_nn==tetri_nnn || 
+           tetri_nn==tetri_nnnn || tetri_nnn==tetri_nnnn )
+    {            
+        tetri_t = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;             
+        tetri_n = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;            
+        tetri_nn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;            
+        tetri_nnn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;            
+        tetri_nnnn = Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;          
+    }
+     
+    mino_count[tetri_t] = mino_count[tetri_n] = mino_count[tetri_nn] = mino_count[tetri_nnn] = mino_count[tetri_nnnn] = 1;
+    tetri=TETRI_TYPES[tetri_t];
+    
+
+
+    function randomTetri()
+    {
+        //出現していないテトリミノを抽出
+        var nexts = [];
+        for ( var i = 1 ; i<TETRI_TYPES.length ; ++i)
+        {
+            if ( mino_count[i] <= 0 )
+            {
+                nexts.push( i );
+            }
+        }
+
+        //出現していないテトリミノがある
+        if ( nexts.length > 0 )
+        {
+            //出現していないテトリミノから乱数で決定
+            tetri_nnnn=nexts[ Math.floor(Math.random()*( nexts.length))];
+            mino_count[tetri_nnnn]++;
+        }
+        else
+        {
+            //全部出現したので
+            for ( var i = 1 ; i<TETRI_TYPES.length ; ++i)
+            {
+                mino_count[i] = 0;
+            }
+            tetri_nnnn=Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+            mino_count[tetri_nnnn]++;
+        }
+    }
+
+    init();
+    drawALL();
+
+
+
+
+    //確率操作(同じミノがまとまらないようにする)
+    function mino_separate(tetri_t,tetri_n,tetri_nn,tetri_nnn,tetri_nnnn)
+    {      
+       for(let i=1; i<=TETRI_TYPES.length; i++)
+        {
+            if(tetri_nnnn==i)
+            mino_count[i]++;
+        }
+    }
+
+
+
+
+
+    //テトリミノをネクストで初期化 (今までは直接drawしていたが、この操作によりdrawする前にsetすることでネクストを実現。)
+    function setTetri()
+    {
+        //ネクストを現在のテトリミノにする
+        tetri_t=tetri_n;
+        tetri_n=tetri_nn;
+        tetri_nn=tetri_nnn;
+        tetri_nnn=tetri_nnnn;
+        tetri=TETRI_TYPES[tetri_t];
+        randomTetri();
+
+        //位置を初期位置にする
+        tetri_x=START_X; 
+        tetri_y=START_Y;       
+    }
+
+    //ホールド機能
+    function hold()
+    {
+        holdCount++;
+        if(holdCount==1)
+        {
+            tetri_hold=tetri_t;
+            tetri_t=tetri_n;
+            tetri_n=tetri_nn;
+            tetri_nn=tetri_nnn;
+            tetri_nnn=tetri_nnnn;
+            tetri=TETRI_TYPES[tetri_t];
+            tetri_nnnn=Math.floor(Math.random()*(TETRI_TYPES.length-1))+1;
+
+            tetri_x=START_X; 
+            tetri_y=START_Y;       
+        }
+        else
+        {
+
+            let temp=null;
+            temp=tetri_t;
+            tetri_t=tetri_hold;
+            tetri_hold=temp;
+            tetri=TETRI_TYPES[tetri_t];
+
+            tetri_x=START_X; 
+            tetri_y=START_Y;
+        }
+    }
+
+
+
+
+    //ブロック一つ表示
+    function drawBlock(x,y,c)
+    {
+        let px = x * BLOCK_SIZE+OFFSET_X;
+        let py = y * BLOCK_SIZE+OFFSET_Y;
+
+        if ( c >= 1 && c < unkos.length)
+        {
+            con.drawImage(block,unkos[c][0],unkos[c][1],148,148,px,py,BLOCK_SIZE,BLOCK_SIZE);
+            con.strokeStyle="black";
+            con.strokeRect(px,py,BLOCK_SIZE,BLOCK_SIZE);
+        }
+        else
+        {
+            con.fillStyle="rgba(255,255,255,0.1)";
+            con.fillRect(px,py,BLOCK_SIZE,BLOCK_SIZE);
+            con.strokeStyle="black";
+            con.strokeRect(px,py,BLOCK_SIZE,BLOCK_SIZE);
+        }
+    }
+     
+
+
+    //ネクスト、ホールドのブロック一つ表示
+    function drawSmallBlock(x,y,c)
+    {
+        let px = x * SMALLBLOCK_SIZE+OFFSET_X;
+        let py = y * SMALLBLOCK_SIZE+OFFSET_Y;
+        
+        if ( c >= 1 && c < unkos.length)
+        {
+            con.drawImage(block,unkos[c][0],unkos[c][1],148,148,px,py,SMALLBLOCK_SIZE,SMALLBLOCK_SIZE);
+            con.strokeStyle="black";
+            con.strokeRect(px,py,SMALLBLOCK_SIZE,SMALLBLOCK_SIZE);
+        }
+        else
+        {
+            con.fillStyle="rgba(255,255,255,0.1)";
+            con.fillRect(px,py,SMALLBLOCK_SIZE,SMALLBLOCK_SIZE);
+            con.strokeStyle="black";
+            con.strokeRect(px,py,SMALLBLOCK_SIZE,SMALLBLOCK_SIZE);
+        }
+    }
+    
+
+    
+    //初期状態
+    function init()
+    {
+        for(let y=0; y<FIELD_ROW; y++)
+        {
+            field[y]=[];
+            for(let x=0; x<FIELD_COL; x++)
+            {
+                field[y][x]=0;
+            }
+        }
+    }
+
+
+    //全部描画
+    function drawALL()
+    {
+
+    con.clearRect(0,0,CANVAS_W,CANVAS_H);
+    con.drawImage(background,0,0,CANVAS_W,CANVAS_H); //clearRectならフィールド状態をリセット
+
+    con.strokeStyle=OUT_LINE_COLOR;//rgbaのaは透過度(0~1)を表す。~styleで状態変更 //二重の枠でおしゃれな感じになってる。//rgbは0~255までの2^8段階。
+    con.lineWidth =2;
+    con.strokeRect(OFFSET_X-3,OFFSET_Y-3,SCREEN_W+6,SCREEN_H+6); //テトリスのフィールドから縦横6px離れた場所に枠を描画。strokeRect()の()の中は始点のxy座標、xy方向の長さの4つを書く。
+    con.strokeRect(NEXTSET_X,NEXTSET_Y,SMALLBLOCK_SIZE*4+10,SMALLBLOCK_SIZE*16+10);
+    con.strokeRect(HOLDSET_X,HOLDSET_Y,SMALLBLOCK_SIZE*4+10,SMALLBLOCK_SIZE*4+10);
+    con.fillStyle="rgba(0,0,0,0.4)";//黒で透過率が高めのやつを作ることで半透明な黒でフィールドを色付けできる。
+    con.fillRect(OFFSET_X,OFFSET_Y,SCREEN_W,SCREEN_H);
+    con.fillRect(NEXTSET_X,NEXTSET_Y,SMALLBLOCK_SIZE*4+10,SMALLBLOCK_SIZE*16+10);
+    con.fillRect(HOLDSET_X,HOLDSET_Y,SMALLBLOCK_SIZE*4+10,SMALLBLOCK_SIZE*4+10);
+
+    con.lineWidth=1;
+
+
+       for(let y=0; y<FIELD_ROW; y++)
+       { 
+          for(let x=0; x<FIELD_COL; x++)
+          {
+             if(field[y][x]!=0)
+             {
+                 drawBlock(x,y,field[y][x]);　//installtetriによってフィールドの数字が0or1ではなく0～7に出来ている。
+             }
+          } 
+       }
+
+       //着地点を計算
+       let plus=0;
+       while(checkMove(0,plus+1)){plus++;}
+
+       for(let y=0; y<TETRI_SIZE; y++)
+       { 
+           for(let x=0; x<TETRI_SIZE; x++)
+           {   
+            if(tetri[y][x]!=0)
+            {
+                //テトリミノの着地点
+                 drawBlock(x+tetri_x,y+tetri_y+plus,0);
+
+                //テトリミノ本体
+                 drawBlock(x+tetri_x,y+tetri_y,tetri_t);
+            }
+                //ネクスト
+                    if(TETRI_TYPES[tetri_n][y][x]!=0)
+                {
+                    drawSmallBlock(15.8+x,0.5+y,tetri_n);
+                }
+
+                if(TETRI_TYPES[tetri_nn][y][x]!=0)
+                {
+                    drawSmallBlock(15.8+x,4.5+y,tetri_nn);
+                }
+
+                if(TETRI_TYPES[tetri_nnn][y][x]!=0)
+                {
+                    drawSmallBlock(15.8+x,8.5+y,tetri_nnn);
+                }
+
+                if(TETRI_TYPES[tetri_nnnn][y][x]!=0)
+                {
+                    drawSmallBlock(15.8+x,12.5+y,tetri_nnnn);
+                }
+                //ホールド
+                if(tetri_hold!=null)
+                {
+                    if(TETRI_TYPES[tetri_hold][y][x]!=0)
+                    {
+                        drawSmallBlock(x-4.8,0.5+y,tetri_hold);
+                    }
+                }
+           }
+       }
+    
+       if(over)
+       {
+           let s="GAME OVER";
+           con.font="40px 'MS Serif'";
+           let w=con.measureText(s).width; //ゲームオーバーのサイズを測るコマンド。
+           let x=SCREEN_W/2-w/2+OFFSET_X;
+           let y=SCREEN_H/2-20+OFFSET_Y;     //かなり雑
+           con.lineWidth=4;      //輪郭の太さの指定。
+           con.strokeText(s,x,y); // con.strokeText()は（）の中にテキスト、縦、横を指定して文字の輪郭を書くコマンド。
+           con.fillStyle="white" //文字を何色で塗りつぶすか。
+           con.fillText(s,x,y)   //文字の描写コマンド。
+
+           document.getElementById("audio").pause();
+       }
+       const text1="SCORE";
+       const text2="LINES";
+       con.fillStyle="white";
+       con.font="40px 'MS Serif'"; //fantasyは字体
+       con.fillText(text1,30,12.5*30);
+       con.fillText(score,30,14.5*30);
+       con.fillText(text2,30,18.5*30);
+       con.fillText(lines,30,20.5*30);
+    
+       con.font="20px 'MS Serif'";
+       let text3="H";
+       con.fillText(text3,HOLDSET_X-20,HOLDSET_Y+10);
+       text3="O";
+       con.fillText(text3,HOLDSET_X-20,HOLDSET_Y+30);
+       text3="L";
+       con.fillText(text3,HOLDSET_X-20,HOLDSET_Y+50);
+       text3="D";
+       con.fillText(text3,HOLDSET_X-20,HOLDSET_Y+70);
+
+       con.fillStyle="black";
+       text3="N";
+       con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+10);
+       text3="E";
+       con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+30);
+       text3="X";
+       con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+50);
+       text3="T";
+       con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+70);
+       
+
+    
+    }
+
+    
+    //当たり判定
+    function checkMove(mx,my,ntetri)
+    {
+    if(ntetri==undefined) {ntetri=tetri;}
+    for(let y=0; y<TETRI_SIZE; y++)
+    { 
+        for(let x=0; x<TETRI_SIZE; x++)
+        {
+            let nx=tetri_x+mx+x;
+            let ny=tetri_y+my+y;
+            if(ntetri[y][x]!=0)
+            {
+               if( ny<0 || nx<0 || ny>=FIELD_ROW || nx>=FIELD_COL || field[ny][nx]!=0  ) {return false;}
+            }           
+        }
+    }
+        return true;
+    }
+    
+    //回転
+    function rotate()
+    {
+     let ntetri=[];
+     for(let y=0; y<TETRI_SIZE; y++)
+        { 
+            ntetri[y]=[];
+            for(let x=0; x<TETRI_SIZE; x++)
+               {
+                ntetri[y][x]=tetri[TETRI_SIZE-x-1][y];
+               }
+        }
+     return ntetri;
+    }
+
+    //逆回転
+    function exrotate()
+    {
+     let ntetri=[];
+     for(let y=0; y<TETRI_SIZE; y++)
+        { 
+            ntetri[y]=[];
+            for(let x=0; x<TETRI_SIZE; x++)
+               {
+                ntetri[y][x]=tetri[x][TETRI_SIZE-y-1];//回転後を基準としていることに注意
+               }
+        }
+     return ntetri;
+    }
+    
+    
+    //落下全般
+    setTimeout(dropTetri,GAME_SPEED-score); //setInterval(~,間隔(何ミリ秒))で一定時間置きの動作が可能。 
+    
+    function dropTetri()
+    {
+        if(over) {return;} 
+    
+        if( checkMove(0,1) )  {tetri_y++;}
+    
+        else                 
+        {
+            installTetri();
+            checkLine();
+            setTetri();
+            
+            if(!checkMove(0,0))
+                {
+                    over=true;
+                }
+        }
+    setTimeout(dropTetri,800*(0.8**(score/1000)));   //setIntervalではなくsetTimeoutにすることで随時更新を可能にした。 
+    drawALL();                                                //スコア１万を超え始めると速くなる。
+    }
+   
+    
+    //落下し終わったテトリミノ停止
+    function installTetri()
+    {
+      for(let y=0; y<TETRI_SIZE; y++)
+      {
+          for(let x=0; x<TETRI_SIZE; x++)
+          {
+              if(tetri[y][x]!=0)
+              {
+                  field[tetri_y+y][tetri_x+x]=tetri_t;
+                  
+              }
+          }    
+      }
+      sound1.play();
+      holdflag=true;
+    }
+    
+    //ラインがそろったときにチェックして消す
+    function checkLine()
+    {
+        linecount=0 //何行消されているか
+        for(let y=0; y<FIELD_ROW; y++)
+        {
+            let flag=true;
+    
+            for(let x=0; x<FIELD_COL; x++)
+            {
+                if(!field[y][x])        //falgがfalseになった瞬間にこの関数の初めの部分に転送されて次の行の確認に入るようになってる。
+                {
+                    flag=false;
+                    break;
+                }
+            } 
+            if(flag)
+            {
+                linecount++;
+                lines++;
+                score+=(linecount**2)*100;
+    
+                for(let ny=y; ny>0; ny--)  //ny--は上の行に行くことを示してる。
+                {
+                    for(let nx=0; nx<FIELD_COL; nx++)
+                    {
+                        field[ny][nx]=field[ny-1][nx];  //この処理はそろった列を上の行の状態にすることで、そろった列が消えたような感じになってる。
+                        sound2.play();
+                    }
+                }
+            }    
+        }
+    }
+
+
+    //何列消したか
+　　
+    
+    
+    //キー設定
+    document.onkeydown=function(e)
+    {
+        if(over) {return;} //ゲームオーバーフラグが立ってたらキーを押しても作動しないように速攻で返している。 
+     
+        switch(e.key)
+            {
+            case ' ':
+                    if(holdflag)
+                    {
+                        hold();
+                        holdflag=false;
+                    }
+                    break;
+            case 'ArrowLeft':
+            case 'a':
+                    if( checkMove(-1,0) ) {tetri_x--;}
+                    break;　　
+            case 'w':
+            case 'x':       
+                    while( checkMove(0,1) ) {tetri_y++;}
+                    break;
+            case 'ArrowRight':
+            case 'd':
+                    if( checkMove(1,0) )  {tetri_x++;}
+                    break;
+            case 's':
+            case 'ArrowDown':
+                    if( checkMove(0,1) )  {tetri_y++;}
+                    break;
+            case 'c':
+            case 'Enter':
+                    let ntetri=rotate();
+                    if( checkMove(0,0,ntetri) )  {tetri=ntetri;} 
+                    sound3.play();
+                    break;
+            case 'z':
+                    let nntetri=exrotate();
+                    if( checkMove(0,0,nntetri) )  {tetri=nntetri;} 
+                    sound3.play();
+                    break;
+           }
+    
+           drawALL();
+    
+    }
+
+   
+    
+    </script>
+    </body>
