@@ -1,5 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Page</title>
+    <link rel="stylesheet" href="/css/tetris_style.css">
+</head>
 <body>
     <canvas id="can"></canvas>
+    <canvas id="can2"></canvas>
 
     <audio autoplay loop id="audio">
     <!-- <source src="../bgm/game_maoudamashii_2_lastboss02.mp3"> -->
@@ -16,6 +26,8 @@
     
     let can=document.getElementById("can");
     let con=can.getContext("2d");
+    let can2=document.getElementById("can2");
+    let con2=can2.getContext("2d");
     
     const TETRI_SIZE=4;
     const BLOCK_SIZE=30;
@@ -24,6 +36,9 @@
     //キャンバスサイズ
     const CANVAS_W=BLOCK_SIZE*24;
     const CANVAS_H=BLOCK_SIZE*24;//巨大キャンパスにした。
+
+    const CANVAS_2_W=200;
+    const CANVAS_2_H=1000; //操作画面とは違う右側のキャンバス。
 
     //背景、ブロック
     let background=new Image(); //ImageはBGMの画像版。
@@ -631,7 +646,21 @@
     
     }
 
-   
+   //詳細表示一覧
+    // let adj="操作設定";
+    // let Offset2_w = 30; //右の画面の操作画面右端からの初期位置。
+    // let Offset2_h = 70;
+
+    // con.font="20px 'MS Serif'";
+    // let w=con.measureText(s).width; //ゲームオーバーのサイズを測るコマンド。
+    // let x=CANVAS_W+Offset2_w;
+    // let y=CANVAS_H+Offset2_h;     
+    // con.lineWidth=2;      //輪郭の太さの指定。
+    // con.strokeText(s,x,y,CANVAS_W,CANVAS_H); // con.strokeText()は（）の中にテキスト、縦、横を指定して文字の輪郭を書くコマンド。
+    // con.fillStyle="white" //文字を何色で塗りつぶすか。
+    // con.fillText(s,x,y)   //文字の描写コマンド。
+
     
     </script>
-    </body>
+</body>
+</html>
