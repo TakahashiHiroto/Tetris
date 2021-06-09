@@ -19,6 +19,12 @@
             <a href="../views/config.ejs">設定</a>
         </button>
     </main>
+    <form action="http://localhost:8000/post" method="post" enctype="multipart/form-data">
+        <label for="name">名前</label>
+       <input name="name" type="text"></input>
+       <input name="id" type="number"></input>
+       <button type="submit">送信</button>
+   </form>
     <footer>
         <div>
             <li>
@@ -26,6 +32,7 @@
                     <p>tetris</p>
                     <p>swap所属</p>
                     <p>埼玉大学</p>
+                    <p><%=data[0].name%></p>
                 </ul>
             </li>
         </div>

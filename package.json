@@ -5,12 +5,13 @@
   "main": "app.js",
   "dependencies": {
     "ejs": "^3.1.6",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node"
+    "start": "node app"
   },
   "repository": {
     "type": "git",
@@ -22,7 +23,6 @@
     "url": "https://github.com/TakahashiHiroto/tetris-swap/issues"
   },
   "homepage": "https://github.com/TakahashiHiroto/tetris-swap#readme",
-
   "engines": {
     "node": "v4.1.X",
     "npm": "2.14.X"
