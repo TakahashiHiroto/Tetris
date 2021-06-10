@@ -12,19 +12,19 @@
         <div class="title">tetris</div>
     </header>
     <main>
-        <button type="button">
-            <a href="/tetris">ゲームを始める</a>
-        </button>
-        <button type="button">
-            <a href="../views/config.ejs">設定</a>
-        </button>
-        <form action="https://tetris-application.herokuapp.com/post" method="post" enctype="application/x-www-form-urlencoded">
-            <label for="name">id  </label>
-            <input type="number" name="id"></input><br>
-            <label for="name">name</label>
-            <input type="text" name="name"></input>
-            <button type="submit">送信</button>
-       </form>
+        <div class="action-wrapper">
+            <div class="btn-wrapper">
+                <button type="button" onclick="location.href='/tetris'">Game Start</button>
+                <button type="button" onclick="location.href='./views/config.ejs'">Option</button>
+            </div>
+            <form action="http://localhost:8000/post" method="post" enctype="application/x-www-form-urlencoded">
+                <label for="name" class="label">id  </label>
+                <input type="number" name="id" class="input"></input><br>
+                <label for="name" class="label">name</label>
+                <input type="text" name="name" class="input"></input>
+                <button type="submit">Send</button>
+           </form>
+        </div>
     </main>
     <footer>
         <div>
@@ -32,7 +32,7 @@
                 <ul>
                     <p>tetris</p>
                     <p>swap所属</p>
-                    <p>埼玉大学</p>
+                    <p>su大学</p>
                     <p><%=data[0].name%></p>
                 </ul>
             </li>
