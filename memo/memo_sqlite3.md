@@ -46,6 +46,62 @@ CREATE TABLE user (
  DELETE FROM テーブル名 WHERE 条件式;
  ```
  これらで、上から順にデータの追加、更新、削除が可能。条件式は id>1 とか   name=~ とかである。
- ###### ※これは無視してよい。bodyParserはexpressに標準搭載されているため不要。
+ ## 6.webサーバー構築用ファイル(今回はapp.js)に色々追記する
+ まず今回のコードを以下に張り付ける。
+ ```js
+ const express = require('express');
+const app = express();
+//追加
+const sqlite3 = require('sqlite3');
+
+app.use(express.static('public'));
+//追加
+app.use(express.urlencoded({extended: true}));　//URLエンコードを読み取るための何か。
+
+//追加(今まではres.render~しかなかったが、ここでデータベースを定義づけるようにする)
+app.get('/', (req, res) => {
+  const db = new sqlite3.Database('db.sqlite3'); //データベース選択
+  db.serialize(function() {
+    db.all('SELECT id,name FROM USER', function(err, rows) {
+      const returndata = rows;
+      console.log(returndata);
+      res.render('top.ejs',{data:returndata});  //top.ejs内でのdataの定義。プロジェクトのルートディレクトリに関するビュー、テンプレートをレンダリングしている。
+    });
+  });
+  db.close();
+});
+
+
+//追加(ここら一体。データの入力を担う場所)
+app.post('/post', (req, res) => {
+  const db = new sqlite3.Database('db.sqlite3');  
+  const id = req.body['id'];
+  const name = req.body['name'];
+  db.run(
+      'insert into user (id,name) values (?,?)',
+      id,
+      name
+  );
+  res.redirect('/'); //ルートディレクトリに強制移動
+});
+
+app.get('/tetris', (req,res) => {
+  res.render('tetris.ejs');
+})
+
+app.listen(process.env.PORT || 8000);
+ ```
+ ###### ※少なくとも2021/5/06以降は最新にしていれば、bodyParser　(HTML(ejs)のformのinputに入力された値を受け取れるようにするもの)　がexpressに標準搭載されているため別途インストールは不要。
+ また、入力場所に関するコードは以下をmainタグ内に追加。(今回はtop.ejs)
+ ```js
+<form action="http://localhost:8000/post" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="name">id  </label>                         ↑※
+    <input type="number" name="id"></input><br>
+    <label for="name">name</label>
+    <input type="text" name="name"></input>
+    <button type="submit">送信</button>
+</form>
+ ```
+ 
  ### ※注意　データベースにデータを送信する時にデータ形式がマルチパート(inputタグで言うとenctype属性がmultipart/form-data)だと、body-parser(今ではexpressに標準搭載されているHTML(ejs)のformのinputに入力された値を受け取れるようにするもの)では処理できない！だからデータ形式はURLエンコードにすること。
  
