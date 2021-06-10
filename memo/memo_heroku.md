@@ -44,14 +44,17 @@ web: node app.js
 を書く。
 (Postbuildの追加とかやらなくちゃいけない時もあるけど今は略)
 
-## 7.git push heroku main でheroku用のリモートリポジトリにソースコードをpush
-
+## 7.heroku用のリモートリポジトリにソースコードをpush
+```bash
+git push heroku main
+```
+でソースコードをherokuにpush出来る。その後に
 ```bash
 heroku ps:scale web=0 or 1　
 ```
-でon/off。※web=1をweb = 1と空白をつけると機能しない。
-
-## 8.heroku openで立ち上げ
+でon/off。
+#### ※web=1をweb = 1と空白をつけると機能しない。
+そしたら最後にheroku openで立ち上げれば完了。
 
 
 
