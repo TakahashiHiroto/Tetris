@@ -55,6 +55,8 @@ heroku ps:scale web=0 or 1　
 でon/off。
 #### ※web=1をweb = 1と空白をつけると機能しない。
 そしたら最後にheroku openで立ち上げれば完了。
+### 2021/6/10 ps ※なぜかgit push heroku main をすると、node-gypがrebuild出来ないエラーが起きたが、package.jsonのnodeとnpmを最新のバージョンに合わせたらなぜか解消された。
+[nodeとnpmのversionに関する参照記事はこちら](https://nodejs.org/ja/download/releases/)
 
 
 

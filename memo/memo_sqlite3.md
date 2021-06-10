@@ -100,6 +100,8 @@ app.listen(process.env.PORT || 8000);
     <label for="name">name</label>
     <input type="text" name="name"></input>
     <button type="submit">送信</button>
+    //2021/6/10 ps 
+    //http://localhost:8000/post　→　https://tetris-application.herokuapp.com/post
 </form>
  ```
  
