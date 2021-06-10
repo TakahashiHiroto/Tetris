@@ -18,13 +18,14 @@
         <button type="button">
             <a href="../views/config.ejs">設定</a>
         </button>
+        <form action="http://localhost:8000/post" method="post" enctype="application/x-www-form-urlencoded">
+            <label for="name">id  </label>
+            <input type="number" name="id"></input><br>
+            <label for="name">name</label>
+            <input type="text" name="name"></input>
+            <button type="submit">送信</button>
+       </form>
     </main>
-    <form action="http://localhost:8000/post" method="post" enctype="multipart/form-data">
-        <label for="name">名前</label>
-       <input name="name" type="text"></input>
-       <input name="id" type="number"></input>
-       <button type="submit">送信</button>
-   </form>
     <footer>
         <div>
             <li>

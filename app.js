@@ -3,27 +3,26 @@ const app = express();
 const sqlite3 = require('sqlite3');
 
 app.use(express.static('public'));
-var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));  //trueにしてみた。
+
 
 app.get('/', (req, res) => {
-  var db = new sqlite3.Database('db.sqlite3');
+  const db = new sqlite3.Database('db.sqlite3');
   db.serialize(function() {
     db.all('SELECT id,name FROM USER', function(err, rows) {
       const returndata = rows;
       console.log(returndata);
-      res.render('top.ejs',{data:returndata});
+      res.render('top.ejs',{data:returndata});  //top.ejs内でのdataの定義。
     });
   });
   db.close();
 });
 
 app.post('/post', (req, res) => {
-  var db = new sqlite3.Database('db.sqlite3');
+  const db = new sqlite3.Database('db.sqlite3');  
   const name = req.body['name'];
   const id = req.body['id'];
-  console.log(name);
-  console.log(id);
   db.run(
       'insert into user (id,name) values (?,?)',
       id,
