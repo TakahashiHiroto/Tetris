@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/TakahashiHiroto/tetris-swap#readme",
   "engines": {
-    "node": "v8.9.X",
-    "npm": "5.5.X"
+    "node": "v16.3.X",
+    "npm": "7.15.X"
   }
 }
