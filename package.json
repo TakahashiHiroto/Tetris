@@ -24,13 +24,7 @@
   },
   "homepage": "https://github.com/TakahashiHiroto/tetris-swap#readme",
   "engines": {
-    "node": "v4.1.X",
-    "npm": "2.14.X"
-  },
-  "targets": [
-    {
-      "target_name": "binding",
-      "sources": [ "src/binding.cc" ]
-    }
-  ]
+    "node": "v8.9.X",
+    "npm": "5.5.X"
+  }
 }
