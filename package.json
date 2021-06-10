@@ -26,5 +26,11 @@
   "engines": {
     "node": "v4.1.X",
     "npm": "2.14.X"
-  }
+  },
+  "targets": [
+    {
+      "target_name": "binding",
+      "sources": [ "src/binding.cc" ]
+    }
+  ]
 }
