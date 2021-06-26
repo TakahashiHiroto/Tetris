@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended: true}));  //trueにしてみた。
 app.get('/', (req, res) => {
   const db = new sqlite3.Database('db.sqlite3');
   db.serialize(function() {
-    db.all('SELECT id,name FROM USER', function(err, rows) {
+    db.all('SELECT name,score FROM USER', function(err, rows) {
       const returndata = rows;
       console.log(returndata);
       res.render('top.ejs',{data:returndata});  //top.ejs内でのdataの定義。
@@ -21,17 +21,21 @@ app.get('/', (req, res) => {
 app.post('/post', (req, res) => {
   const db = new sqlite3.Database('db.sqlite3');  
   const name = req.body['name'];
-  const id = req.body['id'];
+  const score = req.body['score'];
   db.run(
-      'insert into user (id,name) values (?,?)',
-      id,
-      name
+      'insert into user (name,score) values (?,?)',
+      name,
+      score
   );
   res.redirect('/');
 });
 
 app.get('/tetris', (req,res) => {
   res.render('tetris.ejs');
-})
+});
+
+app.get('/ranking', (req,res) => {
+  res.render('ranking.ejs')
+});
 
 app.listen(process.env.PORT || 8000);

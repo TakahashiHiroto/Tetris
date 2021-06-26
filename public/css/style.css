@@ -34,14 +34,13 @@ form{
     box-shadow: 10px 10px 10px #00000029;
     font-size: 16px;
     padding: 15px 30px;
-    margin-bottom: 12px;
     margin-top: 100px;
     margin-bottom: 70px;
     position: relative;
-    width: 30%;
+    width: 30vw;
     left: 35vw;
     right: 35vw;
-    max-width: 515px;
+    /* max-width: 515px; */
 }
 
 .btn-wrapper{

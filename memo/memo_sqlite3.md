@@ -106,4 +106,11 @@ app.listen(process.env.PORT || 8000);
  ```
  
  ### ※注意　データベースにデータを送信する時にデータ形式がマルチパート(inputタグで言うとenctype属性がmultipart/form-data)だと、body-parser(今ではexpressに標準搭載されているHTML(ejs)のformのinputに入力された値を受け取れるようにするもの)では処理できない！だからデータ形式はURLエンコードにすること。
+
+ ## クエリ文(実際に使ってみたやつ)
+ ```bash
+ ALTER TABLE テーブル名 ADD COLUMN カラム名 データ型; //データベースのcolumn追加 (ちなみにcolumnの削除は対応していないため、削除したい場合はテーブルを作り直す必要がある。)
+ DELATE FROM テーブル名 WHERE 条件式; //データベースのデータ消去
+ DROP TABLE テーブル名; //　テーブルの削除
+ ```
  
