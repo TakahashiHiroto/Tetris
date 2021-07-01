@@ -3,6 +3,7 @@ body{
     height: 90vh;
     background-image: url(/image/背景.jpg);
     background-size: cover;
+    overflow: hidden;
     /* background-position: center; */
    }
 
