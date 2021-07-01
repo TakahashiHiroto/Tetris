@@ -6,43 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tetris Page</title>
     <link rel="stylesheet" href="/css/tetris_style.css">
+    <script src="/js/jquery-3.6.0.min.js"></script>
+    <style>
+    #name{
+        visibility: hidden;
+    }
+    </style>
 </head>
 <body>
-    <canvas id="can"></canvas>
-    <canvas id="can2"></canvas>
-
     <audio autoplay loop id="audio">
-    <source src="/bgm/videoplayback.mp4">
+        <source src="/bgm/videoplayback.mp4">
     </audio>
+    
+    <div class="canvas-wrapper1">
+        <canvas id="can"></canvas>
+    </div>
+
+    <!-- <div class="canvas-wrapper2">
+        <canvas id="can2"></canvas>
+    </div>
+
+    <div class="canvas-wrapper3">
+        <canvas id="can3"></canvas>
+    </div> -->
+
     <script>
+     
+
         //効果音
-        let sound1=new Audio(); sound1.src="/bgm/se_maoudamashii_battle_gun05.mp3"; //設置音
-        let sound2=new Audio(); sound2.src="/bgm/se_maoudamashii_battle_gun03.mp3"; //列消し
-        let sound3=new Audio(); sound2.src="/bgm/se_maoudamashii_battle16.mp3";     //回転
+        let sound1=new Audio("/bgm/テトリス設置音.mp3");  sound1.volume=0.8;//設置音
+        let sound2=new Audio("/bgm/テトリス消去音.mp3"); sound2.volume=0.8;//列消し
+        const audio = document.getElementById("audio");
+        audio.volume = 0.05;
 
     //フィールドサイズ
     const FIELD_COL=10;
     const FIELD_ROW=20;
     
-    let can=document.getElementById("can");
-    let con=can.getContext("2d");
-    let can2=document.getElementById("can2");
-    let con2=can2.getContext("2d");
+    const can=document.getElementById("can");
+    const con=can.getContext("2d");
+    // const can2=document.getElementById("can2");
+    // const con2=can2.getContext("2d");
+    // const can3=document.getElementById("can3");
+    // const con3=can3.getContext("2d");
+
     
     const TETRI_SIZE=4;
     const BLOCK_SIZE=30;
     const SMALLBLOCK_SIZE=20;
     
     //キャンバスサイズ
-    const CANVAS_W=BLOCK_SIZE*24;
+    const CANVAS_W=BLOCK_SIZE*21;
     const CANVAS_H=BLOCK_SIZE*24;//巨大キャンパスにした。
 
-    const CANVAS_2_W=200;
-    const CANVAS_2_H=1000; //操作画面とは違う右側のキャンバス。
 
     //背景、ブロック
     let background=new Image(); //ImageはBGMの画像版。
-    background.src="/image/dark_aurora-Creative_design_wallpaper_1920x1080.jpg";
+    // background.src="/image/背景.jpg";
     let block=new Image();
     block.src="/image/cube-1678974_1920.png";
 
@@ -81,6 +101,11 @@
     //キャンバス設定
     can.width =CANVAS_W; //can.width(height)はコマンド。キャンパスの広さの要素を変更。
     can.height=CANVAS_H; //めんどいから巨大キャンパスにした。
+    // can2.width =200; 
+    // can2.height=CANVAS_H; 
+    // can3.width =450; 
+    // can3.height=CANVAS_H; 
+
 
     //フィールド本体
     let field=[];
@@ -430,8 +455,10 @@
            con.strokeText(s,x,y); // con.strokeText()は（）の中にテキスト、縦、横を指定して文字の輪郭を書くコマンド。
            con.fillStyle="white" //文字を何色で塗りつぶすか。
            con.fillText(s,x,y)   //文字の描写コマンド。
-
-           document.getElementById("audio").pause();
+           document.getElementById("score").value=score;
+           document.getElementById("name").style.visibility="visible";
+          　//ここでスコアと名前を決めている。
+        //    document.getElementById("audio").pause(); //今は止めておいてある
            
        }
        const text1="SCORE";
@@ -453,7 +480,7 @@
        text3="D";
        con.fillText(text3,HOLDSET_X-20,HOLDSET_Y+70);
 
-       con.fillStyle="black";
+       con.fillStyle="white";
        text3="N";
        con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+10);
        text3="E";
@@ -462,6 +489,7 @@
        con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+50);
        text3="T";
        con.fillText(text3,NEXTSET_X+SMALLBLOCK_SIZE*4+20,HOLDSET_Y+70);
+
        
 
     
@@ -617,35 +645,42 @@
             case 'ArrowLeft':
             case 'a':
                     if( checkMove(-1,0) ) {tetri_x--;}
+                    // sound3.play();
                     break;　　
             case 'w':
             case 'x':       
                     while( checkMove(0,1) ) {tetri_y++;}
+                    // sound3.play();
                     break;
             case 'ArrowRight':
             case 'd':
                     if( checkMove(1,0) )  {tetri_x++;}
+                    // sound3.play();
                     break;
             case 's':
             case 'ArrowDown':
                     if( checkMove(0,1) )  {tetri_y++;}
+                    // sound3.play();
                     break;
             case 'c':
             case 'Enter':
                     let ntetri=rotate();
                     if( checkMove(0,0,ntetri) )  {tetri=ntetri;} 
-                    sound3.play();
+                    // sound3.play();
                     break;
             case 'z':
                     let nntetri=exrotate();
                     if( checkMove(0,0,nntetri) )  {tetri=nntetri;} 
-                    sound3.play();
+                    // sound3.play();
                     break;
            }
     
            drawALL();
     
     }
+
+    
+
 
    //詳細表示一覧
     // let adj="操作設定";
@@ -663,5 +698,97 @@
 
     
     </script>
+
+    <div id="big">
+        <div id="table">
+            <div>
+                <h1>操作設定</h1>
+                <p>↑ or w：即落ち</p>
+                <p>→ or d：右</p>
+                <p>← or a：左</p>
+                <p>↓ or s：下</p>
+                <p>Space：ホールド</p>
+                <p>Enter or c：回転(時計)</p>
+                <p>z：回転(反時計)</p>
+            </div>
+    
+            <div id="table#">
+                <h1>~~Tetris Ranking TOP10~~</h1>
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>順位</th>
+                            <td>名前</td>
+                            <td>スコア</td>
+                        </tr>
+                         <tr>
+                            <th>1位</th>
+                            <td> <%=data[0].name%> </td>
+                            <td> <%=data[0].score%> </td>
+                        </tr>
+                         <tr>
+                            <th>2位</th>
+                            <td> <%=data[1].name%> </td>
+                            <td> <%=data[1].score%> </td>
+                        </tr>
+                        <tr>
+                            <th>3位</th>
+                            <td><%=data[2].name%></td>
+                            <td><%=data[2].score%></td>
+                        </tr>
+                        <tr>
+                            <th>4位</th>
+                            <td><%=data[2].name%></td>
+                            <td><%=data[2].score%></td>
+                        </tr>
+                        <tr>
+                            <th>5位</th>
+                            <td><%=data[4].name%></td>
+                            <td><%=data[4].score%></td>
+                        </tr>
+                        <tr>
+                            <th>6位</th>
+                            <td><%=data[5].name%></td>
+                            <td><%=data[5].score%></td>
+                        </tr>
+                        <tr>
+                            <th>7位</th>
+                            <td><%=data[6].name%></td>
+                            <td><%=data[6].score%></td>
+                        </tr>
+                        <tr>
+                            <th>9位</th>
+                            <td><%=data[7].name%></td>
+                            <td><%=data[7].score%></td>
+                        </tr>
+                        <tr>
+                            <th>9位</th>
+                            <td><%=data[8].name%></td>
+                            <td><%=data[8].score%></td>
+                        </tr>
+                        <tr>
+                            <th>10位</th>
+                            <td><%=data[9].name%></td>
+                            <td><%=data[9].score%></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div id="form">
+            <a href="http://localhost:8000/">Quit</a>
+            <form action="http://localhost:8000/post" method="post" enctype="application/x-www-form-urlencoded">
+                <p id="name" type="hidden">
+                    <label for="name">Your Name</label>
+                    <input type="text" value="" name="name">
+                    <input type="hidden" value="" name="score" id="score">  
+                    <button type="submit" id="SendScore">Sending Your Score & Quit</button>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    
+
 </body>
 </html>

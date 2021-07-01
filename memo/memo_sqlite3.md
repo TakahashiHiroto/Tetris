@@ -45,7 +45,7 @@ CREATE TABLE user (
  ```
  でスキーマ情報を表示できる。(スキーマはデータベースが格納されている鞄的存在(?)) また、
  ```bash
- INSERT INTO テーブル名 VALUES(値1, 値2, ...);
+ INSERT INTO テーブル名 (column1,column2...)VALUES(値1, 値2, ...);
  UPDATE テーブル名 SET カラム名1 = 値1, カラム名2 = 値2, ... WHERE 条件式;
  DELETE FROM テーブル名 WHERE 条件式;
  ```
@@ -114,7 +114,7 @@ app.listen(process.env.PORT || 8000);
  ## クエリ文(実際に使ってみたやつ)
  ```bash
  ALTER TABLE テーブル名 ADD COLUMN カラム名 データ型; //データベースのcolumn追加 (ちなみにcolumnの削除は対応していないため、削除したい場合はテーブルを作り直す必要がある。)
- DELATE FROM テーブル名 WHERE 条件式; //データベースのデータ消去
+ DELETE FROM テーブル名 WHERE 条件式; //データベースのデータ消去
  DROP TABLE テーブル名; //　テーブルの削除
  ```
  

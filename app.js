@@ -30,8 +30,15 @@ app.post('/post', (req, res) => {
   res.redirect('/');
 });
 
-app.get('/tetris', (req,res) => {
-  res.render('tetris.ejs');
+app.get('/tetris', (req, res) => {
+  const db = new sqlite3.Database('db.sqlite3');
+  db.serialize(function() {
+    db.all('SELECT name,score FROM USER order by score desc', function(err, rows) {
+      const returndata = rows; //↑にクエリ文を書いてソートする。(種類分け)
+      res.render('tetris.ejs',{data:returndata});  //tetris.ejs内でのdataの定義。
+    });
+  });
+  db.close();
 });
 
 app.get('/ranking', (req, res) => {
@@ -39,7 +46,7 @@ app.get('/ranking', (req, res) => {
   db.serialize(function() {
     db.all('SELECT name,score FROM USER order by score desc', function(err, rows) {
       const returndata = rows; //↑にクエリ文を書いてソートする。(種類分け)
-      res.render('ranking.ejs',{data:returndata});  //top.ejs内でのdataの定義。
+      res.render('ranking.ejs',{data:returndata});  //ranking.ejs内でのdataの定義。
     });
   });
   db.close();

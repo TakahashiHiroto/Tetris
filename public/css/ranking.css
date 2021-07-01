@@ -1,7 +1,31 @@
+body{
+    background-image: url(/image/ranking背景.jpg);
+    background-size: cover;
+    
+}
+
+div{
+    text-align: center;
+}
+
+h1,a{
+    color: rgb(158, 158, 158);
+}
+
+a{
+    margin-top: 10vw;
+    display: block;
+    text-align: center;
+}
+
 th,td {
+    color: rgb(167, 167, 167);
     border: solid 1px;              /* 枠線指定 */
 }
  
 table {
+    display: inline;
+    margin: 7vw 0 7vw 0;
+    color: rgb(160, 157, 157);
     border-collapse:  collapse;     /* セルの線を重ねる */
 }

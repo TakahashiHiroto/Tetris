@@ -14,17 +14,29 @@
     <main>
         <div class="action-wrapper">
             <div class="btn-wrapper">
-                <button type="button" onclick="location.href='/tetris'">Game Start</button>
-                <button type="button" onclick="location.href='/ranking'">Ranking</button>
+                <!-- <form action="http://localhost/" method="post" enctype="application/x-www-form-urlencoded" id="form"> -->
+                    <!-- <label for="name" class="label">name</label>
+                    <input type="text" name="username" id="name"> -->
+                    <button type="submit" onclick="location.href='/tetris'"id="button">Game Start</button>
+                    <button type="button" onclick="location.href='/ranking'" id="button">Ranking</button>
+                    <button type="button">Option</button>
+                <!-- </form> -->
             </div>
-            <form action="http://localhost:8000/post" method="post" enctype="application/x-www-form-urlencoded">
-                <label for="name" class="label">score</label>
-                <input type="number" name="score" class="input"></input><br>
-                <label for="name" class="label">name</label>
-                <input type="text" name="name" class="input"></input>
-                <button type="submit">Send</button>
-           </form>
         </div>
+        <script>
+            // const input_name = document.getElementById("name");
+            // input_name.addEventListener("change",function(){
+            //     const button = document.getElementById("button");
+            //     button.setAttribute('onclick',"rename();location.href='/tetris'")
+            // });
+
+            // let username = null;
+            // let rename = function(){
+            //     username = document.getElementById("name").value;
+                
+            // };
+
+        </script>
     </main>
     <footer>
         <div>
@@ -33,11 +45,12 @@
                     <p>tetris</p>
                     <p>swap所属</p>
                     <p>s.univ</p>
-                    <%let number = Math.floor(Math.random()*3)%>
-                    <p><%=data[number].name%></p>
+                    <p>T.H</p>
                 </ul>
             </li>
         </div>
     </footer>
 </body>
+
+
 </html>

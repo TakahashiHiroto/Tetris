@@ -1,0 +1,84 @@
+body{
+    width: 100vw;
+    height: 90vh;
+    background-image: url(/image/背景.jpg);
+    background-size: cover;
+    /* background-position: center; */
+   }
+
+.canvas-wrapper1{
+    display: inline-flex;
+}
+
+.canvas-wrapper2{
+    display: inline-flex;
+}
+
+.canvas-wrapper3{
+    display: inline-flex;
+}
+
+#table{
+    display: inline-flex;
+    color: white;
+    float: right;
+}
+
+#table div{
+    padding: 0 2.5vw 3vw 2.5vw;
+    background: linear-gradient(to right, rgba(29, 28, 34, 0.801), rgba(66, 66, 66, 0.582));
+    margin-right: 1vw;
+    border-radius: 20%;
+}
+
+#big{
+    display: inline;
+    float: right;
+}
+
+button{
+    color: white;
+    background-color: rgba(0, 0, 0, 0.603);
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 5%;
+    margin-top: 5vw;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.692);
+
+}
+
+button:hover{
+    color: rgba(0, 0, 0, 0.603);
+    background-color: rgba(238, 238, 238, 0.521);
+    font-size: 30px;
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 5%;
+    margin-top: 5vw;
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.692);
+
+}
+
+button:active{
+    color: rgba(0, 0, 0, 0.603);
+    background-color: rgba(238, 238, 238, 0.521);
+    font-size: 30px;
+    padding: 10px;
+    border-radius: 5%;
+    margin-top: 5vw;
+    right: 5px;
+}
+
+label{
+    color: white;
+    font-size: 20px;
+}
+
+
+a{
+    color: white;
+    font-size: 20px;
+}
+
+
+   
