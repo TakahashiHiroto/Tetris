@@ -10,7 +10,7 @@ app.use(express.urlencoded({extended: true}));  //trueにしてみた。
 //mysqlの時の設定。
 
 const connection = mysql.createConnection({
-  host: 'localhost',
+  host: 'https://tetris-application.herokuapp.com/',
   user: 'root',
   password: 'Hirohiro0724',
   database: 'tetris'
@@ -52,7 +52,7 @@ app.post('/post', (req, res) => {
 
 app.get('/tetris', (req, res) => {
   connection.query(
-    'SELECT * FROM user',
+    'SELECT name,score FROM USER order by score desc',
     (error, results) => {
       const returndata = results;
       res.render('tetris.ejs',{data:returndata});
