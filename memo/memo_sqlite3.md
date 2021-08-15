@@ -45,7 +45,7 @@ CREATE TABLE user (
  ```
  でスキーマ情報を表示できる。(スキーマはデータベースが格納されている鞄的存在(?)) また、
  ```bash
- INSERT INTO テーブル名 (column1,column2...)VALUES(値1, 値2, ...);
+ INSERT INTO テーブル名 VALUES(値1, 値2, ...); // <= このかっこ内はカラムの要素に対応。
  UPDATE テーブル名 SET カラム名1 = 値1, カラム名2 = 値2, ... WHERE 条件式;
  DELETE FROM テーブル名 WHERE 条件式;
  ```
